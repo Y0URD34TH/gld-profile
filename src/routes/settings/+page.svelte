@@ -37,18 +37,20 @@
 		dialog.close();
 	}
 
-	function handleSubmit() {
-		// Delay the dummy request to /update to avoid blocking the form POST
-		setTimeout(() => {
-			fetch('/update', { method: 'GET' })
-				.then(() => console.log('Dummy /update request sent'))
-				.catch((err) => console.error('Dummy /update request failed', err));
-		}, 100);
-	}
+	function handleSubmit(event: SubmitEvent) {
+	// Let the form submit first (no preventDefault)
+	// Schedule the dummy fetch slightly after
+	setTimeout(() => {
+		fetch('/update', { method: 'GET' })
+			.then(() => console.log('Dummy /update request sent'))
+			.catch((err) => console.error('Dummy /update request failed', err));
+	}, 100);
+}
+
 </script>
 
 <div class="settings">
-	<form method="POST" action="?/save" enctype="multipart/form-data" on:submit={handleSubmit}>
+<form on:submit={handleSubmit} method="POST" action="?/save" enctype="multipart/form-data">
 		<h1>Settings:</h1>
 
 		<div class="images">
