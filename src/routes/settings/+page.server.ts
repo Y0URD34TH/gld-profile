@@ -33,7 +33,7 @@ export const actions = {
             const { token, record } = await locals.pb.collection("users")
                 .update(locals.user.id, payload)
 
-            await locals.pb.collection("users").authRefresh();
+            // await locals.pb.collection("users").authRefresh();
         } catch (err) {
             console.log(err)
 
