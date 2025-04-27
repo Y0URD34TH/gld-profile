@@ -1,0 +1,5 @@
+# DONT
+.env
+
+.svelte-kit/
+node_modules/
