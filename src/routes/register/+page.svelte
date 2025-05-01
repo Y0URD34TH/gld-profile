@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation'; // Import goto
 	import { enhance } from '$app/forms';
 	import type { PageData, ActionData } from './$types';
+        import { POCKETBASE_SERVER } from '$env/static/private';
 
 	// import { loginWithEmail, authStore } from '$lib/pocketbase';
 	import '$lib/styles/login.scss';
@@ -11,7 +12,7 @@
 	let formElement: HTMLFormElement | null = null;
 
 	async function ifureadinguaregay() {
-		const res = await fetch('https://gld.pockethost.io/api/collections/users/auth-with-password', {
+		const res = await fetch(POCKETBASE_SERVER'api/collections/users/auth-with-password', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
