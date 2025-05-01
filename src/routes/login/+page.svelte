@@ -1,7 +1,6 @@
 <script lang="ts">
 	import '$lib/styles/login.scss';
-	import { POCKETBASE_SERVER } from '$env/static/private';
-
+	
 	let email: string = $state(''),
 		password: string = $state('');
 	
@@ -9,7 +8,7 @@
 	let formElement: HTMLFormElement | null = null; 
 
 	async function ifureadinguaregay() {
-		const res = await fetch(`${POCKETBASE_SERVER}api/collections/users/auth-with-password`, {
+		const res = await fetch('https://gld.pockethost.io/api/collections/users/auth-with-password', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
