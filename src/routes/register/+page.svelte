@@ -11,7 +11,7 @@
 	let formElement: HTMLFormElement | null = null;
 
 	async function ifureadinguaregay() {
-		const res = await fetch('https://project-gld.top/api/collections/users/auth-with-password', {
+		const res = await fetch('https://gld.pockethost.io/api/collections/users/auth-with-password', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
