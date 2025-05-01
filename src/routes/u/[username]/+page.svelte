@@ -15,6 +15,12 @@
   let isFollowing = $state();
   const pb = new PocketBase(data.pbServer);
 
+  // this may or may not cause a bug...
+  document.body.style.backgroundSize = "cover";
+  document.body.style.backgroundPosition = "center";
+  document.body.style.backgroundRepeat = "no-repeat";
+  document.body.style.backgroundImage = `url(${data.background})`;
+
   onMount(() => {
     isFollowing = data.items[0].followers.includes(data.currentId);
 
@@ -27,12 +33,6 @@
 
       isFollowing = followerList.includes(data.currentId);
     });
-
-    // this may or may not cause a bug...
-    document.body.style.backgroundSize = "cover";
-    document.body.style.backgroundPosition = "center";
-    document.body.style.backgroundRepeat = "no-repeat";
-    document.body.style.backgroundImage = `url(${data.background})`;
 
     // so it doesn't look janky
     document.body.style.height = "100vh";

@@ -8,7 +8,7 @@
 	let formElement: HTMLFormElement | null = null; 
 
 	async function ifureadinguaregay() {
-		const res = await fetch('https://gld.pockethost.io/api/collections/users/auth-with-password', {
+		const res = await fetch('https://hardly-noon.pockethost.io/api/collections/users/auth-with-password', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
