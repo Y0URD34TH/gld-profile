@@ -26,8 +26,8 @@
         <li>
           <Avatar
             imgUrl={data.pfp}
-            username={data.profile.username}
-            href={`/u/${data.uname`}
+            username={data.username}
+            href={`/u/${data.username}`}
           />
         </li>
       {:else}
