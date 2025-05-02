@@ -15,38 +15,37 @@
   let isFollowing = $state();
   const pb = new PocketBase(data.pbServer);
 
-  // this may or may not cause a bug...
-  document.body.style.backgroundSize = "cover";
-  document.body.style.backgroundPosition = "center";
-  document.body.style.backgroundRepeat = "no-repeat";
-  document.body.style.backgroundImage = `url(${data.background})`;
-
   onMount(() => {
+    // Set up background styling
+    document.body.style.backgroundSize = "cover";
+    document.body.style.backgroundPosition = "center";
+    document.body.style.backgroundRepeat = "no-repeat";
+    document.body.style.backgroundImage = `url(${data.background})`;
+    document.body.style.height = "100vh";
+
+    // Check if the current user is following the profile
     isFollowing = data.items[0].followers.includes(data.currentId);
 
-    // subscribe to the users collection
+    // Subscribe to live updates
     pb.collection("users").subscribe(data.items[0].id, (event) => {
       online = event.record.is_online;
       currentGame = event.record.currently_playing;
 
-      let followerList = event.record.followers as string[];
-
+      const followerList = event.record.followers as string[];
       isFollowing = followerList.includes(data.currentId);
     });
-
-    // so it doesn't look janky
-    document.body.style.height = "100vh";
   });
 
   onDestroy(() => {
     if (browser) {
       document.body.style.backgroundImage = "";
+      document.body.style.height = "";
     }
 
     online = false;
     currentGame = "";
 
-    pb.collection("*").unsubscribe("*");
+    pb.collection("users").unsubscribe(data.items[0].id);
   });
 
   async function followUser() {
@@ -76,13 +75,11 @@
       <div class="name">
         {#if online}
           <h1>
-            <span class="online"
-              >{data.items[0].displayName || data.items[0].username}</span
-            >
+            <span class="online">
+              {data.items[0].displayName || data.items[0].username}
+            </span>
             {#if currentGame.length > 0}
-              <span class="current-game">
-                - {currentGame}
-              </span>
+              <span class="current-game"> - {currentGame} </span>
             {/if}
           </h1>
         {:else}
@@ -94,17 +91,16 @@
     </div>
 
     {#if data.items[0].id !== data.currentId}
-      {#if isFollowing}
-        <div class="follow-btn">
-          <button onclick={unFollowUser}>Unfollow</button>
-        </div>
-      {:else}
-        <div class="follow-btn">
-          <button onclick={followUser}>Follow</button>
-        </div>
-      {/if}
+      <div class="follow-btn">
+        {#if isFollowing}
+          <button on:click={unFollowUser}>Unfollow</button>
+        {:else}
+          <button on:click={followUser}>Follow</button>
+        {/if}
+      </div>
     {/if}
   </div>
+
   <div class="content">
     <Games id={data.items[0].id} />
     <Followers user={data.items[0]} />
