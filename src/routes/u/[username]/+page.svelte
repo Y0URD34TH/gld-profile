@@ -3,10 +3,10 @@
   import PocketBase from "pocketbase";
   import Games from "$lib/components/Games.svelte";
   import Followers from "$lib/components/Followers.svelte";
-  import "$lib/styles/profile.scss";
+  import Avatar from "$lib/components/Avatar.svelte";
   import { onDestroy, onMount } from "svelte";
   import { browser } from "$app/environment";
-  import Avatar from "$lib/components/Avatar.svelte";
+  import "$lib/styles/profile.scss";
 
   let { data }: PageProps = $props();
 
@@ -16,17 +16,8 @@
   const pb = new PocketBase(data.pbServer);
 
   onMount(() => {
-    // Set up background styling
-    document.body.style.backgroundSize = "cover";
-    document.body.style.backgroundPosition = "center";
-    document.body.style.backgroundRepeat = "no-repeat";
-    document.body.style.backgroundImage = `url(${data.background})`;
-    document.body.style.height = "100vh";
-
-    // Check if the current user is following the profile
     isFollowing = data.items[0].followers.includes(data.currentId);
 
-    // Subscribe to live updates
     pb.collection("users").subscribe(data.items[0].id, (event) => {
       online = event.record.is_online;
       currentGame = event.record.currently_playing;
@@ -37,11 +28,6 @@
   });
 
   onDestroy(() => {
-    if (browser) {
-      document.body.style.backgroundImage = "";
-      document.body.style.height = "";
-    }
-
     online = false;
     currentGame = "";
 
@@ -67,42 +53,48 @@
   }
 </script>
 
-<div class="profile">
-  <div class="header">
-    <div class="wrapper">
-      <Avatar imgUrl={data.profilePicture} username={data.items[0].username} />
+<svelte:head>
+  <link rel="preload" as="image" href="{data.background}">
+</svelte:head>
 
-      <div class="name">
-        {#if online}
-          <h1>
-            <span class="online">
-              {data.items[0].displayName || data.items[0].username}
-            </span>
-            {#if currentGame.length > 0}
-              <span class="current-game"> - {currentGame} </span>
-            {/if}
-          </h1>
-        {:else}
-          <h1>{data.items[0].displayName || data.items[0].username}</h1>
-        {/if}
-        <span>/u/{data.items[0].username}</span>
-        <p>{data.items[0].description}</p>
+<div class="background-wrapper" style="background-image: url({data.background})">
+  <div class="profile">
+    <div class="header">
+      <div class="wrapper">
+        <Avatar imgUrl={data.profilePicture} username={data.items[0].username} />
+
+        <div class="name">
+          {#if online}
+            <h1>
+              <span class="online">
+                {data.items[0].displayName || data.items[0].username}
+              </span>
+              {#if currentGame.length > 0}
+                <span class="current-game"> - {currentGame} </span>
+              {/if}
+            </h1>
+          {:else}
+            <h1>{data.items[0].displayName || data.items[0].username}</h1>
+          {/if}
+          <span>/u/{data.items[0].username}</span>
+          <p>{data.items[0].description}</p>
+        </div>
       </div>
+
+      {#if data.items[0].id !== data.currentId}
+        <div class="follow-btn">
+          {#if isFollowing}
+            <button on:click={unFollowUser}>Unfollow</button>
+          {:else}
+            <button on:click={followUser}>Follow</button>
+          {/if}
+        </div>
+      {/if}
     </div>
 
-    {#if data.items[0].id !== data.currentId}
-      <div class="follow-btn">
-        {#if isFollowing}
-          <button on:click={unFollowUser}>Unfollow</button>
-        {:else}
-          <button on:click={followUser}>Follow</button>
-        {/if}
-      </div>
-    {/if}
-  </div>
-
-  <div class="content">
-    <Games id={data.items[0].id} />
-    <Followers user={data.items[0]} />
+    <div class="content">
+      <Games id={data.items[0].id} />
+      <Followers user={data.items[0]} />
+    </div>
   </div>
 </div>
