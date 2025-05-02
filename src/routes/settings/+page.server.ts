@@ -35,7 +35,7 @@ export const actions = {
 
             locals.user;
 
-            // await locals.pb.collection("users").authRefresh();
+             await locals.pb.collection("users").authRefresh();
         } catch (err) {
             console.log(err)
 
