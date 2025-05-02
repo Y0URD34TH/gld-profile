@@ -47,7 +47,7 @@
 </script>
 
 <div class="settings">
-	<!-- <iframe name="save-complete-frame" style="display:none;" onload={onSaveComplete}></iframe> -->
+	<iframe name="save-complete-frame" style="display:none;" onload={onSaveComplete}></iframe>
 
 	<form method="POST" action="?/save" enctype="multipart/form-data" target="save-complete-frame">
 		<h1>Settings:</h1>
@@ -72,7 +72,8 @@
 				<div class="background">
 					<img
 						src={backgroundUrl ||
-							data.bg}
+							data.bg ||
+							`https://api.dicebear.com/9.x/identicon/svg?seed=${data.user.username}&backgroundColor=ffdfbf,b6e3f4`}
 						alt="Preview"
 					/>
 				</div>
