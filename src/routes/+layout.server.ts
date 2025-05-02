@@ -9,12 +9,9 @@ export const load = async ({ locals }) => {
     }
 
     return {
-      profile: structuredClone(locals.user), 
-      uname: locals.user.username,
-      pfp: picUrl
+      profile: structuredClone(locals.user),
+      pfp: picUrl,
+      username: locals.user.username
     };
-  } else {
-    console.error("User is not authenticated or invalid.");
-    return { profile: null, pfp: null };
   }
 };
