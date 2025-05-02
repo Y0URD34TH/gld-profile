@@ -8,11 +8,9 @@ export const load = async ({ locals }) => {
       picUrl = `https://api.dicebear.com/9.x/identicon/svg?seed=${locals.user.username}&backgroundColor=ffdfbf,b6e3f4`;
     }
 
-    console.log('User Data:', locals.user);
-    console.log('Username:', locals.user.username);
-
     return {
       profile: structuredClone(locals.user), 
+      uname: locals.user.username,
       pfp: picUrl
     };
   } else {
