@@ -30,6 +30,15 @@
 
         {#if $responseData !== undefined}
             {#each $responseData.data as item}
+                <!-- Log the item to the console to see its contents -->
+                <script>
+                    console.log('Item:', item);
+                    console.log('Username:', item.username);
+                    console.log('Display Name:', item.displayName);
+                    console.log('Description:', item.description);
+                    console.log('Picture URL:', item.pictureUrl);
+                </script>
+
                 <div class="search-profile">
                     <img src={ 
                         item.pictureUrl === "" ? 
