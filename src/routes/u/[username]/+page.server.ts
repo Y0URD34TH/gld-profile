@@ -1,22 +1,30 @@
 export const prerender = false;
 
 import { getBg, getPfp } from '$lib/utils';
-import type { PageServerLoad } from './$types';
+import type { PageServerLoad, Actions } from './$types';
 import { POCKETBASE_SERVER } from '$env/static/private';
 import { fail } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
-	// disables autocancelation for 500 fix
+	// disables autoCancellation to avoid issues with 500 errors
 	locals.pb.autoCancellation(false);
 
 	const recordList = await locals.pb.collection('users').getList(1, 1, {
 		filter: `username = "${params.username}"`
 	});
 
-	const pfp = await getPfp(locals.pb, recordList.items[0].id, false);
-	const bg = await getBg(locals.pb, recordList.items[0].id);
+	const user = recordList.items[0];
 
-	// enables autocancelation
+	// If user not found, return 404
+	if (!user) {
+		locals.pb.autoCancellation(true);
+		throw fail(404, { message: 'User not found' });
+	}
+
+	const pfp = await getPfp(locals.pb, user.id, false);
+	const bg = await getBg(locals.pb, user.id);
+
+	// Re-enable autoCancellation
 	locals.pb.autoCancellation(true);
 
 	return {
@@ -28,19 +36,40 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 	};
 };
 
-export const actions = {
+export const actions: Actions = {
 	follow: async ({ request, locals }) => {
 		const formData = await request.formData();
-		const requestData = Object.assign([...formData]);
+		const currentFollowersStr = formData.get('current'); // stringified array
+		const newFollower = formData.get('new');             // user ID to add
+		const followTarget = formData.get('follow');         // target user ID
 
-		const currentFollowers = await locals.pb.collection('users').getOne(requestData.follow);
+		if (!currentFollowersStr || !newFollower || !followTarget) {
+			return fail(400, { message: 'Invalid form data' });
+		}
 
-		const data = {
-			followers: [...requestData.current, requestData.new],
-			follow: requestData.follow
-		};
+		let currentFollowers: string[] = [];
 
-		console.log(data);
-		return {};
+		try {
+			currentFollowers = JSON.parse(currentFollowersStr.toString());
+		} catch (err) {
+			console.error('Failed to parse current followers:', err);
+			return fail(400, { message: 'Malformed followers list' });
+		}
+
+		// Avoid duplicates
+		if (!currentFollowers.includes(newFollower.toString())) {
+			currentFollowers.push(newFollower.toString());
+		}
+
+		try {
+			await locals.pb.collection('users').update(followTarget.toString(), {
+				followers: currentFollowers
+			});
+		} catch (err) {
+			console.error('Failed to update followers:', err);
+			return fail(500, { message: 'Could not update followers' });
+		}
+
+		return { success: true };
 	}
 };
