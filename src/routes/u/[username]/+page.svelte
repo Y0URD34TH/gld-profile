@@ -17,11 +17,12 @@
 
   onMount(() => {
     // Set up background styling
+    document.body.style.minHeight = "100vh"; // Use minHeight
     document.body.style.backgroundSize = "cover";
     document.body.style.backgroundPosition = "center";
     document.body.style.backgroundRepeat = "no-repeat";
+    document.body.style.backgroundAttachment = "fixed";
     document.body.style.backgroundImage = `url(${data.background})`;
-    document.body.style.height = "100vh";
 
     // Check if the current user is following the profile
     isFollowing = data.items[0].followers.includes(data.currentId);
@@ -37,9 +38,17 @@
   });
 
   onDestroy(() => {
+    // Ensure ALL styles set in onMount are reset here
     if (browser) {
+      document.body.style.margin = ""; // <-- Add reset
+      document.body.style.padding = ""; // <-- Add reset
+      document.body.style.backgroundSize = ""; // <-- Add reset
+      document.body.style.backgroundPosition = ""; // <-- Add reset
+      document.body.style.backgroundRepeat = ""; // <-- Add reset
       document.body.style.backgroundImage = "";
-      document.body.style.height = "";
+      document.body.style.backgroundAttachment = ""; // <-- Add reset
+      document.body.style.minHeight = ""; // <-- Add reset (or height = "" if you used that)
+      // document.body.style.height = ""; // Reset this if you used height instead of minHeight
     }
 
     online = false;
@@ -72,36 +81,33 @@
     <div class="wrapper">
       <Avatar imgUrl={data.profilePicture} username={data.items[0].username} />
 
-```
-  <div class="name">
-    {#if online}
-      <h1>
-        <span class="online">
-          {data.items[0].displayName || data.items[0].username}
-        </span>
-        {#if currentGame.length > 0}
-          <span class="current-game"> - {currentGame} </span>
+      <div class="name">
+        {#if online}
+          <h1>
+            <span class="online">
+              {data.items[0].displayName || data.items[0].username}
+            </span>
+            {#if currentGame.length > 0}
+              <span class="current-game"> - {currentGame} </span>
+            {/if}
+          </h1>
+        {:else}
+          <h1>{data.items[0].displayName || data.items[0].username}</h1>
         {/if}
-      </h1>
-    {:else}
-      <h1>{data.items[0].displayName || data.items[0].username}</h1>
-    {/if}
-    <span>/u/{data.items[0].username}</span>
-    <p>{data.items[0].description}</p>
-  </div>
-</div>
+        <span>/u/{data.items[0].username}</span>
+        <p>{data.items[0].description}</p>
+      </div>
+    </div>
 
-{#if data.items[0].id !== data.currentId}
-  <div class="follow-btn">
-    {#if isFollowing}
-      <button on:click={unFollowUser}>Unfollow</button>
-    {:else}
-      <button on:click={followUser}>Follow</button>
+    {#if data.items[0].id !== data.currentId}
+      <div class="follow-btn">
+        {#if isFollowing}
+          <button on:click={unFollowUser}>Unfollow</button>
+        {:else}
+          <button on:click={followUser}>Follow</button>
+        {/if}
+      </div>
     {/if}
-  </div>
-{/if}
-```
-
   </div>
 
   <div class="content">
