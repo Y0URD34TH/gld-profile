@@ -99,11 +99,18 @@
                 </div>
 
                 {#if game.unlockedachievements.length + game.lockedachievements.length !== 0}
-                  <progress
-                    max={game.unlockedachievements.length +
-                      game.lockedachievements.length}
-                    value={game.unlockedachievements.length}
-                  ></progress>
+                  <div class="progress">
+                    <progress
+                      max={game.unlockedachievements.length +
+                        game.lockedachievements.length}
+                      value={game.unlockedachievements.length}
+                    >
+                    </progress>
+                    <span>
+                      {game.unlockedachievements.length} / {game
+                        .lockedachievements.length}
+                    </span>
+                  </div>
                 {/if}
               </div>
 

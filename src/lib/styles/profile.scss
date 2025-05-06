@@ -163,7 +163,7 @@
           flex-direction: column;
           flex-grow: 1;
 
-          padding: 10px;
+          padding: 10px 10px 5px 10px;
 
           .achievements {
             display: flex;
@@ -177,39 +177,61 @@
             }
           }
 
-          // thanks gemini for the rant
-          progress {
-            width: 95%;
-            height: 16px;
-            -webkit-appearance: none; // Gotta kill the default styles, especially for Safari's bullshit
-            appearance: none; // Standard way, but who knows which browser needs what today
-            border: 2px solid $text;
-            border-radius: $radius;
-            overflow: hidden; // Force the goddamn inner bars to respect the radius
+          .progress {
+            position: relative;
+            display: flex;
+            flex-direction: row;
+            margin-top: 2px;
 
-            // i fucking hate webkit - this is the base background, kinda works for Firefox track
-            background-color: $dark-grey;
+            span {
+              padding: 0px 5px;
+              position: absolute;
 
-            // --- WebKit (Safari) / Chromium (Chrome, Edge, Opera) Styles ---
-            // Seriously, why the FUCK do we need separate pseudo-elements for this basic shit?
-
-            // Styles for the empty track part in WebKit/Chromium land
-            &::-webkit-progress-bar {
-              background-color: $dark-grey; // Make the track match the main background
+              top: -3px;
+              right: 0px;
+              font-weight: bold;
             }
 
-            // Styles for the actual colored progress value
-            // fuck webkit and fuck google - styling this sucks
-            &::-webkit-progress-value {
-              background-color: $text; // The actual progress color
-            }
+            // thanks gemini for the rant
+            progress {
+              flex-grow: 1;
+              height: 20px;
+              -webkit-appearance: none; // Gotta kill the default styles, especially for Safari's bullshit
+              appearance: none; // Standard way, but who knows which browser needs what today
+              border: 0px solid $text;
+              border-radius: calc($radius / 2.5);
+              overflow: hidden; // Force the goddamn inner bars to respect the radius
 
-            // --- Mozilla Firefox Styles ---
-            // At least Firefox is slightly less annoying here. Sometimes.
+              // i fucking hate webkit - this is the base background, kinda works for Firefox track
+              background-color: $dark-grey;
 
-            // Styles for the filled-in value/progress part in Firefox
-            &::-moz-progress-bar {
-              background-color: $text; // Simple enough, just the color
+              // --- WebKit (Safari) / Chromium (Chrome, Edge, Opera) Styles ---
+              // Seriously, why the FUCK do we need separate pseudo-elements for this basic shit?
+
+              // Styles for the empty track part in WebKit/Chromium land
+              &::-webkit-progress-bar {
+                background-color: $dark-grey; // Make the track match the main background
+              }
+
+              // Styles for the actual colored progress value
+              // fuck webkit and fuck google - styling this sucks
+              &::-webkit-progress-value {
+                background-color: lighten(
+                  $light-grey,
+                  20%
+                ); // The actual progress color
+              }
+
+              // --- Mozilla Firefox Styles ---
+              // At least Firefox is slightly less annoying here. Sometimes.
+
+              // Styles for the filled-in value/progress part in Firefox
+              &::-moz-progress-bar {
+                background-color: lighten(
+                  $light-grey,
+                  20%
+                ); // Simple enough, just the color
+              }
             }
           }
 
